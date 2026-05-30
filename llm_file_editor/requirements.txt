@@ -1,0 +1,18 @@
+# Core dependencies
+langchain>=0.1.0
+langchain-openai>=0.0.5
+pydantic>=2.0.0
+
+# Optional: for async support
+# aiofiles>=23.0.0
+
+# Optional: for enhanced LLM support
+# langchain-anthropic>=0.0.5
+# langchain-google-genai>=0.0.5
+
+# Development dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
