@@ -7,12 +7,14 @@ Run with: pytest tests/
 import pytest
 import tempfile
 import os
+import typing
 from pathlib import Path
 
 from llm_file_editor.core.file_manager import FileManager, FileContent
 from llm_file_editor.core.diff_engine import DiffEngine, EditCommand, EditType, DiffResult
 from llm_file_editor.security.access_control import AccessControl, Role, Permission, AccessPolicy
 from llm_file_editor.security.audit_logger import AuditLogger, ActionType
+from llm_file_editor.integrations import langchain_integration
 
 
 class TestFileManager:
@@ -294,6 +296,19 @@ class TestAuditLogger:
         finally:
             if os.path.exists(export_path):
                 os.unlink(export_path)
+
+
+class TestLangChainIntegration:
+    """Tests for the LangChain integration module."""
+
+    def test_annotations_resolve(self):
+        """Test that the annotations of create_file_editing_agent resolve.
+
+        Python 3.13 and older evaluate these annotations on import, so an
+        undefined name makes `import llm_file_editor` raise NameError. Python
+        3.14 evaluates them lazily; get_type_hints() forces the evaluation.
+        """
+        typing.get_type_hints(langchain_integration.create_file_editing_agent)
 
 
 if __name__ == "__main__":

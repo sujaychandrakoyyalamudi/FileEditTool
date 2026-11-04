@@ -118,7 +118,7 @@ Be careful not to modify unrelated code. Always preserve the original formatting
         self.audit_logger = AuditLogger(audit_storage_path) if audit_enabled else None
         self.access_control = AccessControl()
         
-        self._agent_executor: Optional[AgentExecutor] = None
+        self._agent_executor: Optional[Any] = None
         self._memory: Optional[ConversationBufferMemory] = None
         
     def get_tools(self) -> List[BaseTool]:
@@ -279,7 +279,7 @@ def create_file_editing_agent(
     root_dir: Optional[str] = None,
     user_id: str = "default",
     verbose: bool = True
-) -> AgentExecutor:
+) -> Any:
     """
     Quick setup function to create a file editing agent.
     
