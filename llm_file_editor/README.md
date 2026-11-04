@@ -27,7 +27,7 @@ AccessControl, AuditLogger: standalone helpers that your own code calls
 
 ## Requirements
 
-- Python 3.14 or newer. On Python 3.13 and older, `import llm_file_editor` raises `NameError` (see [Known issues](#known-issues)).
+- Python 3.11 or newer (tested on 3.11, 3.12, 3.13, and 3.14).
 - The packages in `requirements.txt`: `langchain`, `langchain-openai`, and `pydantic`, plus the development tools `pytest`, `pytest-cov`, `black`, `flake8`, and `mypy`.
 
 ## Installation
@@ -37,7 +37,7 @@ The package is not published on PyPI, and the repository has no `pyproject.toml`
 ```bash
 git clone https://github.com/sujaychandrakoyyalamudi/FileEditTool.git
 cd FileEditTool
-python3.14 -m venv .venv && source .venv/bin/activate
+python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r llm_file_editor/requirements.txt
 ```
 
@@ -208,7 +208,6 @@ The tools catch exceptions and return an error message string instead of raising
 
 ## Known issues
 
-- **Import fails on Python 3.13 and older.** `create_file_editing_agent` in `integrations/langchain_integration.py` has the return annotation `-> AgentExecutor`, and `AgentExecutor` is never imported. Python evaluates that annotation when the module loads, so `import llm_file_editor` raises `NameError`. Python 3.14 evaluates annotations lazily, so the import works there.
 - **`create_agent_executor` and `create_file_editing_agent` do not work.** They call `langgraph.prebuilt.create_react_agent(llm, tools, state_modifier=...)`. Current LangGraph raises `TypeError` for `state_modifier` (it was replaced by `prompt`). `langgraph` is not in `requirements.txt`; LangChain 1.x installs it as a dependency. These helpers return a LangGraph graph that takes `{"messages": [...]}`, not an `AgentExecutor` that takes `{"input": ...}`.
 - **`create_simple_agent_chain` does not work with LangChain 1.x.** It imports `langchain.chains` and `langchain.agents.initialize_agent`, which LangChain 1.x removed.
 - **`create_file_editing_agent` is not exported** from the package root. It is in `llm_file_editor.integrations.langchain_integration`.
@@ -229,13 +228,13 @@ The tools catch exceptions and return an error message string instead of raising
 
 ## Testing
 
-From the repository root, with Python 3.14 or newer and the dependencies installed:
+From the repository root, with Python 3.11 or newer and the dependencies installed:
 
 ```bash
 pytest llm_file_editor/tests/test_core.py -v
 ```
 
-The tests cover `FileManager` (view, line ranges, write, delete, listing, sandbox violations), `DiffEngine` (replace, insert, delete, `apply_command`), `AccessControl` (default roles, sensitive policy, edit validation), and `AuditLogger` with a new log file (logging, history, integrity, JSON export). They do not cover the LangChain tools, `LangChainIntegration`, reopening a log file, or `list_directory` with an extension allow-list.
+The tests cover `FileManager` (view, line ranges, write, delete, listing, sandbox violations), `DiffEngine` (replace, insert, delete, `apply_command`), `AccessControl` (default roles, sensitive policy, edit validation), and `AuditLogger` with a new log file (logging, history, integrity, JSON export). One more test checks that the type annotations of `create_file_editing_agent` resolve; an undefined name there breaks `import llm_file_editor` on Python 3.13 and older. They do not cover the LangChain tools, `LangChainIntegration`, reopening a log file, or `list_directory` with an extension allow-list.
 
 ## License
 

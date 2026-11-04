@@ -30,11 +30,11 @@ The package is not on PyPI and has no `pyproject.toml` or `setup.py`. Clone the 
 ```bash
 git clone https://github.com/sujaychandrakoyyalamudi/FileEditTool.git
 cd FileEditTool
-python3.14 -m venv .venv && source .venv/bin/activate
+python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r llm_file_editor/requirements.txt
 ```
 
-Use Python 3.14 or newer. On Python 3.13 and older, `import llm_file_editor` currently fails (see [Safety and limits](#safety-and-limits)). `requirements.txt` also installs the development tools (pytest, pytest-cov, black, flake8, mypy). Run your code from the repository root so `llm_file_editor` is importable.
+Use Python 3.11 or newer (tested on 3.11, 3.12, 3.13, and 3.14). `requirements.txt` also installs the development tools (pytest, pytest-cov, black, flake8, mypy). Run your code from the repository root so `llm_file_editor` is importable.
 
 ## Quick start
 
@@ -78,7 +78,6 @@ print(result["messages"][-1].content)
 
 Known issues in the current code:
 
-- On Python 3.13 and older, importing the package raises `NameError: name 'AgentExecutor' is not defined`. The return annotation of `create_file_editing_agent` names a class that is never imported.
 - The built-in agent helpers do not work with current LangChain. `create_agent_executor` and `create_file_editing_agent` call LangGraph's `create_react_agent` with `state_modifier`, which current LangGraph rejects with a `TypeError`. `create_simple_agent_chain` uses `initialize_agent` and `langchain.chains`, which LangChain 1.x removed. Use `create_agent` as shown above.
 - `FileEditingCallback` is never attached by `create_agent_executor`, and it only records a call when the tool input is a JSON string, so agent runs are not audit-logged.
 - `list_directory` fails whenever `allowed_extensions` is set, because the directory path itself fails the extension check.
@@ -104,13 +103,13 @@ llm_file_editor/
 
 ## Tests
 
-From the repository root, with Python 3.14 or newer and the dependencies installed:
+From the repository root, with Python 3.11 or newer and the dependencies installed:
 
 ```bash
 pytest llm_file_editor/tests/test_core.py -v
 ```
 
-The tests cover `FileManager`, `DiffEngine`, `AccessControl`, and `AuditLogger`. They do not cover the LangChain tools or the integration module.
+The tests cover `FileManager`, `DiffEngine`, `AccessControl`, and `AuditLogger`. They do not cover the LangChain tools or the integration module, apart from one test that checks the type annotations of `create_file_editing_agent` resolve.
 
 ## Roadmap (not implemented yet)
 
